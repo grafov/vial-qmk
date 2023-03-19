@@ -31,4 +31,4 @@ TAP_DANCE_ENABLE = yes
 COMBO_ENABLE = yes
 KEY_OVERRIDE_ENABLE = yes
 DYNAMIC_MACRO_ENABLE = yes
-CAPS_WORD_ENABLE = yes
+#CAPS_WORD_ENABLE = yes // turned off in official Ergohaven 2.6 firmware
