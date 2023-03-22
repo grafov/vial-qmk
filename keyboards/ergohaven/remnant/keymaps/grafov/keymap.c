@@ -81,6 +81,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        ),
 };
 
+
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_enable=true;
+  //debug_matrix=true;
+  debug_keyboard=true;
+  //debug_mouse=true;
+}
+
 /* change led based on layers */
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     HSV hsv = {0, 0, RGB_MATRIX_MAXIMUM_BRIGHTNESS};
@@ -126,12 +135,45 @@ layer_state_t layer_state_set_user(layer_state_t state) {
       }
     }
     old_layer = cur_layer;
+    xprintf("LAYER: %d \n", cur_layer); // left for debugging yet
     return state;
 }
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    // macro definitions
+    // For compatibility with software that not understand how to map
+    // non-English keys with modifiers. Just temporary switch to
+    // Keymacs layer when modifier pressed. It works only for Russian
+    // layer.
+    static bool back_to_ussr = false;
+    if (cur_layer == RUSSIAN && record->event.pressed) {
+	switch (keycode) {
+	case KC_LCTL:
+	case KC_RCTL:
+	case LCTL_T(KC_DEL):
+	case RCTL_T(KC_ENTER):
+	case KC_LALT:
+	case KC_RALT:
+	    layer_off(RUSSIAN);
+	    layer_on(KEYMACS);
+	    back_to_ussr = true;
+	}
+    }
+    if (back_to_ussr && !record->event.pressed) {
+	switch (keycode) {
+	case KC_LCTL:
+	case KC_RCTL:
+	case LCTL_T(KC_DEL):
+	case RCTL_T(KC_ENTER):
+	case KC_LALT:
+	case KC_RALT:
+	    layer_off(KEYMACS);
+	    layer_on(RUSSIAN);
+	    back_to_ussr = false;
+	}
+    }
+
+  // macro definitions
   switch (keycode) {
     case NEXTSEN:  // Next sentence macro.
       if (record->event.pressed) {
