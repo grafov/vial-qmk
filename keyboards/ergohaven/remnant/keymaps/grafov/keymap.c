@@ -126,6 +126,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
       // Turn on RUS layout on enter to Russian layer.
       if (old_layer != RUSSIAN) {
 	tap_code(RUS);
+      } else {
+	tap_code(LAT);
+	tap_code(RUS);
       }
       break;
     default:
@@ -158,6 +161,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 	    layer_on(KEYMACS);
 	    back_to_ussr = true;
 	}
+	if (record->event.key.col == 0) {
+	    switch (record->event.key.row) {
+	    case 0:
+	    layer_off(RUSSIAN);
+	    layer_on(KEYMACS);
+	    back_to_ussr = true;
+	    }
+	}
     }
     if (back_to_ussr && !record->event.pressed) {
 	switch (keycode) {
@@ -170,6 +181,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 	    layer_off(KEYMACS);
 	    layer_on(RUSSIAN);
 	    back_to_ussr = false;
+	}
+	if (record->event.key.col == 0) {
+	    switch (record->event.key.row) {
+	    case 0:
+	    layer_off(KEYMACS);
+	    layer_on(RUSSIAN);
+	    back_to_ussr = false;
+	    }
 	}
     }
 
